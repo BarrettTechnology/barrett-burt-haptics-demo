@@ -16,6 +16,7 @@
 - [ ] @amyblank
 - [ ] @bz
 - [ ] @jchung
+- [ ] @ps
 
 ### Resources and Documentation
 > Links for resources and documentation go here.

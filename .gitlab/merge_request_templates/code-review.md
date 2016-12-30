@@ -13,6 +13,7 @@ put content here
 - [ ] @amyblank
 - [ ] @bz
 - [ ] @jchung
+- [ ] @ps
 
 ### Resources
 

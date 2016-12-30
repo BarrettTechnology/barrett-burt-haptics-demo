@@ -45,6 +45,7 @@ Reviewers:
 - [ ] @amyblank
 - [ ] @bz
 - [ ] @jchung
+- [ ] @ps
 ```
 
 **How many reviewers do I need?**
