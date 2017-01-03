@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using EXILANT.Labs.CoAP.Channels;
-using EXILANT.Labs.CoAP.Message;
-using EXILANT.Labs.CoAP.Helpers;
-using EXILANT.Labs.CoAP.Exceptions;
 //
 public class RobotActivationDeactivation : MonoBehaviour {
 
@@ -29,10 +25,6 @@ public class RobotActivationDeactivation : MonoBehaviour {
 			///<summary>create Robot Property Group, attach CoAP Client</summary>
 			pgRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
 
-			///<summary>All incoming Req/Responses go into robot.Parse{Request|Response} methods</summary>
-//			comm1._client.CoAPRequestReceived += new CoAPRequestReceivedHandler (pgRobotRight.ParseRequest);
-//			comm1._client.CoAPResponseReceived += new CoAPResponseReceivedHandler (pgRobotRight.ParseResponse);
-
 			pgRobotRight.Enable ();
 			pgRobotRight.Close ();
 		}
@@ -44,10 +36,6 @@ public class RobotActivationDeactivation : MonoBehaviour {
 
 		///<summary>create Robot Property Group, attach CoAP Client</summary>
 		pgRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
-
-		///<summary>All incoming Req/Responses go into robot.Parse{Request|Response} methods</summary>
-//		comm1._client.CoAPRequestReceived += new CoAPRequestReceivedHandler (pgRobotRight.ParseRequest);
-//		comm1._client.CoAPResponseReceived += new CoAPResponseReceivedHandler (pgRobotRight.ParseResponse);
 
 		pgRobotRight.Disable ();
 		pgRobotRight.Close ();

@@ -39,14 +39,14 @@ public class RobotConnection : MonoBehaviour {
 	{
 		rawPos = pgRobotRight.GetPos ();
 		pos.Set (rawPos.Get (1), rawPos.Get (2), rawPos.Get (0), 1);
-//		bt.Logger.Debug (bt.Logger.DEBUG_TX_REQ, "got robot status [" + pos.ToString ("F4") + "]");
+		//bt.Logger.Debug (bt.Logger.DEBUG_TX_REQ, "got robot status [" + pos.ToString ("F4") + "]");
 	}
 
 	public Vector4 getPos() {
 		return pos;
 	}
 
-public void sendForce(Vector3 force) {
+	public void sendForce(Vector3 force) {
 		//Game x is -Robot y, Game y is Robot z, Game z is Robot x
 		//Robot: Vec x is Robot x, Vec y is Robot z, Vec z is Robot y
 		//Game: Game z is Vec x, Game y is Vec y, Game x is Vec z
