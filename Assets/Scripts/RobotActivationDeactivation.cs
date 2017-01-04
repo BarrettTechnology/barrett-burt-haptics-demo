@@ -4,7 +4,7 @@ using System.Collections;
 public class RobotActivationDeactivation : MonoBehaviour {
 
 	public bt.Comm.CommCoapClient comm1;
-	public bt.Comm.RobotApp pgRobotRight;
+	public bt.Comm.RobotApp propGroupRobotRight;
 	public bt.KeyboardManager keyboardManager;
 
 	void Awake () {
@@ -23,10 +23,10 @@ public class RobotActivationDeactivation : MonoBehaviour {
 			comm1 = new bt.Comm.CommCoapClient (bt.connection.IP_1, bt.connection.CLIENT_PORT);
 
 			///<summary>create Robot Property Group, attach CoAP Client</summary>
-			pgRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
+			propGroupRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
 
-			pgRobotRight.Enable ();
-			pgRobotRight.Close ();
+			propGroupRobotRight.Enable ();
+			propGroupRobotRight.Close ();
 		}
 	}
 
@@ -35,9 +35,9 @@ public class RobotActivationDeactivation : MonoBehaviour {
 		comm1 = new bt.Comm.CommCoapClient (bt.connection.IP_1, bt.connection.CLIENT_PORT);
 
 		///<summary>create Robot Property Group, attach CoAP Client</summary>
-		pgRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
+		propGroupRobotRight = new bt.Comm.RobotApp (comm1._client, bt.Comm.Robot.COAP_PREFIX_ROBOT_RIGHT);
 
-		pgRobotRight.Disable ();
-		pgRobotRight.Close ();
+		propGroupRobotRight.Disable ();
+		propGroupRobotRight.Close ();
 	}
 }

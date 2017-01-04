@@ -91,6 +91,11 @@ public class RobotController : MonoBehaviour {
 	void OnDisable() {
 	}
 
+	/// <summary>
+	/// Raises the trigger enter event.
+	/// Initializes the force to zero and prints a debug message.
+	/// </summary>
+	/// <param name="other">Other.</param>
 	void OnTriggerEnter(Collider other) {
 		force = Vector3.zero;
 		print ("Trigger enter " + other.gameObject.name);
@@ -98,21 +103,27 @@ public class RobotController : MonoBehaviour {
 
 	/// <summary>
 	/// Raises the trigger stay event.
-	/// 
+	///
 	/// This means that the player object is in contact with another object. The force
 	/// is proportional to the penetration depth, which depends on the sizes, shapes,
 	/// and relative positions of the objects.
-	/// 
+	///
 	/// Note that this code works when the player object can only contact one object at
 	/// a time. If it will be possible to contact multiple objects, modifications must
 	/// be made to handle this.
+	///
+	/// TODO: This is currently not in use. To use this version, change the player object
+	/// to a trigger. The behavior should be the same as with the collision version. Plan
+	/// to move one version to a separate demo.
 	/// </summary>
 	/// <param name="other">Other.</param>
-	void OnTriggerStay(Collider other){
-		//other.GetComponent<SphereCollider> ().radius;
-		// TODO: switch statement on object name
+	void OnTriggerStay(Collider other) {
+		// TODO: switch statement on object name or object tag so only haptic objects result
+		// in forces.
+		// TODO: get player radius from the collider instead because it might be different. Use
+		// other.GetComponent<SphereCollider> ().radius;
 		Vector3 playerPos = this.gameObject.transform.position;
-		float playerRad = this.gameObject.transform.localScale.x / 2;  // TODO: get this from the collider instead because it might be different
+		float playerRad = this.gameObject.transform.localScale.x / 2;
 		Vector3 otherPos = other.gameObject.transform.position;
 		float otherRad = other.gameObject.transform.localScale.x / 2;
 		float depth = playerRad + otherRad - (playerPos - otherPos).magnitude;  // > 0
@@ -131,13 +142,31 @@ public class RobotController : MonoBehaviour {
 	/// <param name="other">Other.</param>
 	void OnTriggerExit(Collider other) {
 		force = Vector3.zero;
-		//print ("Trigger exit " + other.gameObject.name + ", force = " + force);
 	}
 
-	// EVENTS
+	/// <summary>
+	/// Raises the collision enter event.
+	/// </summary>
+	/// <param name="c">Collision object.</param>
 	void OnCollisionEnter(Collision c ) {
 	}
 
+	/// <summary>
+	/// Raises the collision stay event.
+	///
+	/// This means that the player object is in contact with another object. The force
+	/// is proportional to the penetration depth, which depends on the sizes, shapes,
+	/// and relative positions of the objects.
+	///
+	/// Note that this code works when the player object can only contact one object at
+	/// a time. If it will be possible to contact multiple objects, modifications must
+	/// be made to handle this.
+	///
+	/// TODO: This *is* currently in use. To use the trigger version, change the player
+	/// object to a trigger. The behavior should be the same as with the this version.
+	/// Plan to move one version to a separate demo.
+	/// </summary>
+	/// <param name="c">Collision object.</param>
 	void OnCollisionStay(Collision c ) {
 		Vector3 playerPos = this.gameObject.transform.position;
 		Vector3 playerDims = this.gameObject.transform.localScale;
@@ -146,11 +175,16 @@ public class RobotController : MonoBehaviour {
 		Vector3 contactPos = c.contacts [0].point;
 		float depth = playerRad - (playerPos - contactPos).magnitude;  // > 0
 		Vector3 direction = (playerPos - contactPos).normalized;
-		force = kp * depth * direction +	                         // stiffness: pushes outward
-			   -kd * Vector3.Dot(velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
+		force = kp * depth * direction +	                           // stiffness: pushes outward
+			   -kd * Vector3.Dot(velocity, direction) * direction;     // damping: pushes against radial velocity (+ or -)
 		print (c.contacts [0].otherCollider.gameObject.name + ", player pos = " + playerPos + ", contact pos = " + contactPos + ", depth = " + depth);
 	}
 
+	/// <summary>
+	/// Raises the collision exit event.
+	/// Sets the force back to zero.
+	/// </summary>
+	/// <param name="c">Collision object.</param>
 	void OnCollisionExit(Collision c ) {
 		force = Vector3.zero;
 	}
@@ -158,16 +192,13 @@ public class RobotController : MonoBehaviour {
 	void OnGUI() {
 		Event e = Event.current;
 		string keyPressed = e.keyCode.ToString();
-		if(e.type == EventType.KeyUp) 
-		{
+		if (e.type == EventType.KeyUp) {
 			Debug.Log ("Key pressed: " + keyPressed);
 			keyPressed = keyPressed.ToLower ();
-			//keyboard_manager.handleKeyPress( keyPressed );
 		}
 	}
 
 	// close    
 	void OnApplicationQuit() {
-		//comm.Close();
 	}
 }
