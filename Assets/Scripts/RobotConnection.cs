@@ -13,7 +13,23 @@ public class RobotConnection : MonoBehaviour {
 
 	bt.Types.Vec rawPos;
 	Vector4 pos = new Vector4();
+	Vector4 force = new Vector4();
 	Vector3 combinedForce = new Vector3();
+	Matrix4x4 transCoordsRobotToUnity = Matrix4x4.identity;
+	Matrix4x4 transCoordsUnityToRobot = Matrix4x4.identity;
+
+	/// <summary>
+	/// This is the first function to be called. It sets up the coordinate
+	/// transformations between the robot frame (a right-handed coordinate system) and
+	/// the Unity frame (a left-handed coordinate system). Edit the first three lines
+	/// to change the transformation.
+	/// </summary>
+	void Awake () {
+		transCoordsRobotToUnity.SetRow(0, new Vector4(0, -1, 0, 0)); // Unity x is robot -y, no translation
+		transCoordsRobotToUnity.SetRow(1, new Vector4(0,  0, 1, 0)); // Unity y is robot z, no translation
+		transCoordsRobotToUnity.SetRow(2, new Vector4(1,  0, 0, 0)); // Unity z is robot x, no translation
+		transCoordsUnityToRobot = transCoordsRobotToUnity.inverse;
+	}
 
 	void OnEnable () {
 		///<summary>create new CoAP Client</summary>
@@ -38,19 +54,21 @@ public class RobotConnection : MonoBehaviour {
 	public void OnReceiveRobotStatus (CoAPRequest req)
 	{
 		rawPos = propGroupRobotRight.GetPos ();
-		pos.Set (rawPos.Get (1), rawPos.Get (2), rawPos.Get (0), 1);
+		pos.Set (rawPos.Get (0), rawPos.Get (1), rawPos.Get (2), 1);
+		pos = transCoordsRobotToUnity * pos;
 	}
 
 	public Vector4 getPos() {
 		return pos;
 	}
 
-	public void sendForce(Vector3 force) {
+	public void SendForce(Vector3 force) {
 		combinedForce += force;
 	}
 
 	void FixedUpdate () {
-		propGroupRobotRight.SendForceVector (combinedForce.z, combinedForce.y, combinedForce.x);
+		force = transCoordsUnityToRobot * combinedForce;
+		propGroupRobotRight.SendForceVector (force.x, force.y, force.z);
 		combinedForce = Vector3.zero;
 	}
 }

@@ -20,42 +20,6 @@ public class RobotController : MonoBehaviour {
 
 	RobotConnection conn;
 
-	// Converts comm coordinates to unity coordinates. 
-	// Note that the robot uses a right-handed coordinate system and Unity uses a
-	// left-handed coordinate system. Some conversion is done in the comm layer,
-	// but the output of the comm layer is still a right-handed coordinate system,
-	// so it needs to be switched to left.
-	// Unity axes (+):				Robot axes (+):					Comm axes (+):
-	//   x   right					  x   into screen0				  x   left
-	//   y   up						  y   left						  y   up
-	//   z   into screen			  z   up						  z   into screen
-	// Unity x is comm -x (robot -y)
-	// Unity y is comm y (robot z)
-	// Unity z is comm z (robot x)
-	// TODO(ab): Update the comm layer to output either robot position or position
-	// correctly converted to Unity position.
-	Vector3 robotToUnity(Vector3 input) {
-		return new Vector3 (-input.x, input.y, input.z);
-	}
-
-	// Converts unity coordinates to comm coordinates. 
-	// Note that the robot uses a right-handed coordinate system and Unity uses a
-	// left-handed coordinate system. Some conversion is done in the comm layer,
-	// but the output of the comm layer is still a right-handed coordinate system,
-	// so it needs to be switched to left.
-	// Unity axes (+):				Robot axes (+):					Comm axes (+):
-	//   x   right					  x   into screen				  x   left
-	//   y   up						  y   left						  y   up
-	//   z   into screen			  z   up						  z   into screen
-	// comm x (robot y) is Unity -x
-	// comm y (robot z) is Unity y
-	// comm z (robot x) is Unity z
-	// TODO(ab): Update the comm layer to output either robot position or position
-	// correctly converted to Unity position.
-	Vector3 unityToRobot(Vector3 input) {
-		return new Vector3 (-input.x, input.y, input.z);
-	}
-
 	void Awake () {
 		conn = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
 	}
@@ -76,8 +40,7 @@ public class RobotController : MonoBehaviour {
 	}
 
 	void FixedUpdate ()	{
-		Vector3 robotPos = conn.getPos();
-		Vector3 positionNew = positionScale * robotToUnity (robotPos);
+		Vector3 positionNew = positionScale * conn.getPos();
 		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
 		const float filterFreq = 20;
 		float dt = Time.fixedDeltaTime;
@@ -85,7 +48,7 @@ public class RobotController : MonoBehaviour {
 		position = positionNew;
 		transform.position = position;
 
-		conn.sendForce (unityToRobot(force));
+		conn.SendForce (force);
 	}
 
 	void OnDisable() {
