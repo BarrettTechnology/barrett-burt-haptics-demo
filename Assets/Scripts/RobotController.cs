@@ -18,15 +18,22 @@ public class RobotController : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	private Vector3 force = Vector3.zero;
 
-	RobotConnection conn;
+	RobotConnection robot;
 
+	// runs when scene is entered - this is the very first thing that happens and only happens once.
+	// use this for initializing objects and values that don't matter to other objects. don't use 
+	// this when you need to communicate with other objects because you don't know which will wake up first.
 	void Awake () {
-		conn = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
+		robot = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
 	}
 
-	void OnEnable() {
-	}
+	// we are already in the scene, this happens when the object is enabled - can happen multiple times
+	// everyone is awake now, so communication can happen here.
+	void OnEnable() {}
 
+	// occurs after OnEnable but only occurs once (the first time the object is enabled)
+	// everyone is awake now, so communication can happen here.
+	// this is where you put things that only need to happen once but can't go in Awake()
 	void Start () {
 		// for collision method
 		kp = 20;
@@ -40,7 +47,7 @@ public class RobotController : MonoBehaviour {
 	}
 
 	void FixedUpdate ()	{
-		Vector3 positionNew = positionScale * conn.GetToolPosition();
+		Vector3 positionNew = positionScale * robot.GetToolPosition();
 		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
 		const float filterFreq = 20;
 		float dt = Time.fixedDeltaTime;
@@ -48,7 +55,7 @@ public class RobotController : MonoBehaviour {
 		position = positionNew;
 		transform.position = position;
 
-		conn.SendToolForce (force);
+		robot.SetToolForce (force);
 	}
 
 	void OnDisable() {
@@ -162,6 +169,5 @@ public class RobotController : MonoBehaviour {
 	}
 
 	// close    
-	void OnApplicationQuit() {
-	}
+	void OnApplicationQuit() {}
 }
