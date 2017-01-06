@@ -40,7 +40,7 @@ public class RobotController : MonoBehaviour {
 	}
 
 	void FixedUpdate ()	{
-		Vector3 positionNew = positionScale * conn.getPos();
+		Vector3 positionNew = positionScale * conn.GetToolPosition();
 		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
 		const float filterFreq = 20;
 		float dt = Time.fixedDeltaTime;
@@ -48,7 +48,7 @@ public class RobotController : MonoBehaviour {
 		position = positionNew;
 		transform.position = position;
 
-		conn.SendForce (force);
+		conn.SendToolForce (force);
 	}
 
 	void OnDisable() {
