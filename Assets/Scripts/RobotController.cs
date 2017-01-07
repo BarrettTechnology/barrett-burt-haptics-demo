@@ -20,20 +20,29 @@ public class RobotController : MonoBehaviour {
 
 	RobotConnection robot;
 
-	// runs when scene is entered - this is the very first thing that happens and only happens once.
-	// use this for initializing objects and values that don't matter to other objects. don't use 
-	// this when you need to communicate with other objects because you don't know which will wake up first.
+	/// <summary>
+	/// Runs when the scene is entered. This is the first thing that happens, and it
+	/// happens only once. Use this function for initializing objects and for setting
+	/// values that don't matter to other objects. Don't use this to communicate with
+	/// other objects because you don't know which objects have already had their
+	/// Awake() functions called.
+	/// </summary>
 	void Awake () {
 		robot = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
 	}
 
-	// we are already in the scene, this happens when the object is enabled - can happen multiple times
-	// everyone is awake now, so communication can happen here.
+	/// <summary>
+	/// Runs when the object is enabled (and thus the scene has already been entered).
+	/// This can happen multiple times, since objects can be enabled and disabled.
+	/// All of the other objects in the scene have already had their Awake() functions
+	/// called, so communication between objects can happen here.
+	/// </summary>
 	void OnEnable() {}
 
-	// occurs after OnEnable but only occurs once (the first time the object is enabled)
-	// everyone is awake now, so communication can happen here.
-	// this is where you put things that only need to happen once but can't go in Awake()
+	/// <summary>
+	/// Runs after OnEnable, but only occurs once (the first time the object is enabled).
+	/// Communication between objects can also happen here.
+	/// </summary>
 	void Start () {
 		// for collision method
 		kp = 20;
@@ -46,6 +55,10 @@ public class RobotController : MonoBehaviour {
 		*/
 	}
 
+	/// <summary>
+	/// Runs during the physics loop at 500 Hz. Typically, robot control (receiving positions
+	/// and sending forces) should happen here.
+	/// </summary>
 	void FixedUpdate ()	{
 		Vector3 positionNew = positionScale * robot.GetToolPosition();
 		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
@@ -58,11 +71,16 @@ public class RobotController : MonoBehaviour {
 		robot.SetToolForce (force);
 	}
 
-	void OnDisable() {
-	}
+	/// <summary>
+	/// Runs every time the object is disabled.
+	/// </summary>
+	void OnDisable() {}
 
 	/// <summary>
-	/// Raises the trigger enter event.
+	/// Raises the trigger enter event. This happens when the trigger object first contacts
+	/// another object. This will only occur once for each collision. If the object remains
+	/// in contact, OnTriggerStay() will be called instead.
+	/// 
 	/// Initializes the force to zero and prints a debug message.
 	/// </summary>
 	/// <param name="other">Other.</param>
@@ -72,7 +90,8 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the trigger stay event.
+	/// Raises the trigger stay event. This happens for every timestep during with
+	/// the player object remains in contact with the other object.
 	///
 	/// This means that the player object is in contact with another object. The force
 	/// is proportional to the penetration depth, which depends on the sizes, shapes,
@@ -106,7 +125,9 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the trigger exit event.
+	/// Raises the trigger exit event. This happens at the timestep when the player object
+	/// loses contact with the other object.
+	/// 
 	/// Sets the force back to zero.
 	/// </summary>
 	/// <param name="other">Other.</param>
@@ -115,14 +136,17 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the collision enter event.
+	/// Raises the collision enter event. This happens when the object first contacts
+	/// another object. This will only occur once for each collision. If the object remains
+	/// in contact, OnCollisionStay() will be called instead.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionEnter(Collision c ) {
 	}
 
 	/// <summary>
-	/// Raises the collision stay event.
+	/// Raises the collision stay event. This happens for every timestep during with
+	/// the player object remains in contact with the other object.
 	///
 	/// This means that the player object is in contact with another object. The force
 	/// is proportional to the penetration depth, which depends on the sizes, shapes,
@@ -151,7 +175,9 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the collision exit event.
+	/// Raises the collision exit event. This happens at the timestep when the player object
+	/// loses contact with the other object.
+	/// 
 	/// Sets the force back to zero.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
@@ -168,6 +194,8 @@ public class RobotController : MonoBehaviour {
 		}
 	}
 
-	// close    
+	/// <summary>
+	/// Raises the application quit event. This is called when you quit the game.
+	/// </summary>
 	void OnApplicationQuit() {}
 }
