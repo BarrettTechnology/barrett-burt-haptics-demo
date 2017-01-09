@@ -60,12 +60,8 @@ public class RobotController : MonoBehaviour {
 	/// and sending forces) should happen here.
 	/// </summary>
 	void FixedUpdate ()	{
-		Vector3 positionNew = positionScale * robot.GetToolPosition();
-		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
-		const float filterFreq = 20;
-		float dt = Time.fixedDeltaTime;
-		velocity = (velocity + filterFreq * dt * velocityNew) / (1 + filterFreq * dt);  // filtered
-		position = positionNew;
+		position = positionScale * robot.GetToolPosition ();
+		velocity = positionScale * robot.GetToolVelocity ();
 		transform.position = position;
 
 		robot.SetToolForce (force);
