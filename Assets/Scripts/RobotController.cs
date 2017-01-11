@@ -18,7 +18,7 @@ public class RobotController : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	private Vector3 force = Vector3.zero;
 
-	RobotConnection robot;
+	Barrett.UnityInterface.RobotConnection robot;
 
 	/// <summary>
 	/// Runs when the scene is entered. This is the first thing that happens, and it
@@ -28,7 +28,7 @@ public class RobotController : MonoBehaviour {
 	/// Awake() functions called.
 	/// </summary>
 	void Awake () {
-		robot = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
+		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection>();
 	}
 
 	/// <summary>
