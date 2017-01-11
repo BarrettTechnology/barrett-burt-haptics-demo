@@ -18,51 +18,31 @@ public class RobotController : MonoBehaviour {
 	private Vector3 velocity = Vector3.zero;
 	private Vector3 force = Vector3.zero;
 
-	RobotConnection conn;
+	Barrett.UnityInterface.RobotConnection robot;
 
-	// Converts comm coordinates to unity coordinates. 
-	// Note that the robot uses a right-handed coordinate system and Unity uses a
-	// left-handed coordinate system. Some conversion is done in the comm layer,
-	// but the output of the comm layer is still a right-handed coordinate system,
-	// so it needs to be switched to left.
-	// Unity axes (+):				Robot axes (+):					Comm axes (+):
-	//   x   right					  x   into screen0				  x   left
-	//   y   up						  y   left						  y   up
-	//   z   into screen			  z   up						  z   into screen
-	// Unity x is comm -x (robot -y)
-	// Unity y is comm y (robot z)
-	// Unity z is comm z (robot x)
-	// TODO(ab): Update the comm layer to output either robot position or position
-	// correctly converted to Unity position.
-	Vector3 robotToUnity(Vector3 input) {
-		return new Vector3 (-input.x, input.y, input.z);
-	}
-
-	// Converts unity coordinates to comm coordinates. 
-	// Note that the robot uses a right-handed coordinate system and Unity uses a
-	// left-handed coordinate system. Some conversion is done in the comm layer,
-	// but the output of the comm layer is still a right-handed coordinate system,
-	// so it needs to be switched to left.
-	// Unity axes (+):				Robot axes (+):					Comm axes (+):
-	//   x   right					  x   into screen				  x   left
-	//   y   up						  y   left						  y   up
-	//   z   into screen			  z   up						  z   into screen
-	// comm x (robot y) is Unity -x
-	// comm y (robot z) is Unity y
-	// comm z (robot x) is Unity z
-	// TODO(ab): Update the comm layer to output either robot position or position
-	// correctly converted to Unity position.
-	Vector3 unityToRobot(Vector3 input) {
-		return new Vector3 (-input.x, input.y, input.z);
-	}
-
+	/// <summary>
+	/// Runs when the scene is entered. This is the first thing that happens, and it
+	/// happens only once. Use this function for initializing objects and for setting
+	/// values that don't matter to other objects. Don't use this to communicate with
+	/// other objects because you don't know which objects have already had their
+	/// Awake() functions called.
+	/// </summary>
 	void Awake () {
-		conn = GameObject.Find ("RobotConnection").GetComponent<RobotConnection>();
+		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection>();
 	}
 
-	void OnEnable() {
-	}
+	/// <summary>
+	/// Runs when the object is enabled (and thus the scene has already been entered).
+	/// This can happen multiple times, since objects can be enabled and disabled.
+	/// All of the other objects in the scene have already had their Awake() functions
+	/// called, so communication between objects can happen here.
+	/// </summary>
+	void OnEnable() {}
 
+	/// <summary>
+	/// Runs after OnEnable, but only occurs once (the first time the object is enabled).
+	/// Communication between objects can also happen here.
+	/// </summary>
 	void Start () {
 		// for collision method
 		kp = 20;
@@ -75,24 +55,28 @@ public class RobotController : MonoBehaviour {
 		*/
 	}
 
+	/// <summary>
+	/// Runs during the physics loop at 500 Hz. Typically, robot control (receiving positions
+	/// and sending forces) should happen here.
+	/// </summary>
 	void FixedUpdate ()	{
-		Vector3 robotPos = conn.getPos();
-		Vector3 positionNew = positionScale * robotToUnity (robotPos);
-		Vector3 velocityNew = (positionNew - position) / Time.fixedDeltaTime;  // raw unfiltered
-		const float filterFreq = 20;
-		float dt = Time.fixedDeltaTime;
-		velocity = (velocity + filterFreq * dt * velocityNew) / (1 + filterFreq * dt);  // filtered
-		position = positionNew;
+		position = positionScale * robot.GetToolPosition ();
+		velocity = positionScale * robot.GetToolVelocity ();
 		transform.position = position;
 
-		conn.sendForce (unityToRobot(force));
-	}
-
-	void OnDisable() {
+		robot.SetToolForce (force);
 	}
 
 	/// <summary>
-	/// Raises the trigger enter event.
+	/// Runs every time the object is disabled.
+	/// </summary>
+	void OnDisable() {}
+
+	/// <summary>
+	/// Raises the trigger enter event. This happens when the trigger object first contacts
+	/// another object. This will only occur once for each collision. If the object remains
+	/// in contact, OnTriggerStay() will be called instead.
+	/// 
 	/// Initializes the force to zero and prints a debug message.
 	/// </summary>
 	/// <param name="other">Other.</param>
@@ -102,7 +86,8 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the trigger stay event.
+	/// Raises the trigger stay event. This happens for every timestep during with
+	/// the player object remains in contact with the other object.
 	///
 	/// This means that the player object is in contact with another object. The force
 	/// is proportional to the penetration depth, which depends on the sizes, shapes,
@@ -136,7 +121,9 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the trigger exit event.
+	/// Raises the trigger exit event. This happens at the timestep when the player object
+	/// loses contact with the other object.
+	/// 
 	/// Sets the force back to zero.
 	/// </summary>
 	/// <param name="other">Other.</param>
@@ -145,14 +132,17 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the collision enter event.
+	/// Raises the collision enter event. This happens when the object first contacts
+	/// another object. This will only occur once for each collision. If the object remains
+	/// in contact, OnCollisionStay() will be called instead.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionEnter(Collision c ) {
 	}
 
 	/// <summary>
-	/// Raises the collision stay event.
+	/// Raises the collision stay event. This happens for every timestep during with
+	/// the player object remains in contact with the other object.
 	///
 	/// This means that the player object is in contact with another object. The force
 	/// is proportional to the penetration depth, which depends on the sizes, shapes,
@@ -181,7 +171,9 @@ public class RobotController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Raises the collision exit event.
+	/// Raises the collision exit event. This happens at the timestep when the player object
+	/// loses contact with the other object.
+	/// 
 	/// Sets the force back to zero.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
@@ -198,7 +190,8 @@ public class RobotController : MonoBehaviour {
 		}
 	}
 
-	// close    
-	void OnApplicationQuit() {
-	}
+	/// <summary>
+	/// Raises the application quit event. This is called when you quit the game.
+	/// </summary>
+	void OnApplicationQuit() {}
 }
