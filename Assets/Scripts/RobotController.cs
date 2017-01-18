@@ -14,9 +14,8 @@
 public class RobotController : MonoBehaviour {
 
 	// public variables can be changed in the Unity editor at any time (even during run time).
-	// Here they are initialized to suggested values.
-	public float kp = 300.0f;
-	public float kd = 30.0f;
+	public float kp;
+	public float kd;
 
 	private const float positionScale = 15.0f;  // scales the robot position for the Unity workspace
 
@@ -36,6 +35,10 @@ public class RobotController : MonoBehaviour {
 	/// </summary>
 	void Awake () {
 		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection> ();
+
+		// initialize kp and kp to default values
+		kp = 400.0f;
+		kd = 40.0f;
 	}
 
 	/// <summary>
@@ -84,7 +87,11 @@ public class RobotController : MonoBehaviour {
 	/// in contact, OnCollisionStay() will be called instead.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
-	void OnCollisionEnter (Collision c) {}
+	void OnCollisionEnter (Collision c) {
+		for (int i = 0; i < c.contacts.Length; i++) {
+			Debug.Log ("Collision enter: " + c.contacts [i].otherCollider.gameObject.name);
+		}
+	}
 
 	/// <summary>
 	/// Raises the collision stay event. This happens for every timestep during with
@@ -95,28 +102,36 @@ public class RobotController : MonoBehaviour {
 	/// and relative positions of the objects.
 	///
 	/// Note that this code works when the player object can only contact one object at
-	/// a time. If it will be possible to contact multiple objects, modifications must
-	/// be made to handle this.
+	/// a time, and only at a single point. If it will be possible to contact multiple
+	/// objects at the same time or multiple points on the same object (the latter can
+	/// often happen with very thin objects), modifications must be made to handle this.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionStay (Collision c) {
 		Vector3 playerPos = this.gameObject.transform.position;
-		Vector3 playerDims = this.gameObject.transform.localScale;
+
+		// Because this example uses a SphereCollider for the Player, it works best if
+		// the Player object is a sphere (equal scale in x, y, and z). If the Player
+		// object is stretched, the diameter of the SphereCollider is equal to the
+		// largest dimension. So for playerRad here, we use the max of playerDims.
+		Vector3 playerDims = this.gameObject.transform.localScale;  // size of the Player object
 		float playerRad = c.contacts [0].thisCollider.GetComponent<SphereCollider> ().radius *
 		                  Mathf.Max (playerDims.x, playerDims.y, playerDims.z);
+
 		Vector3 contactPos = c.contacts [0].point;
 		float depth = playerRad - (playerPos - contactPos).magnitude;  // > 0
 		Vector3 direction = (playerPos - contactPos).normalized;
-		tool_force = kp * depth * direction +	                      // stiffness: pushes outward
-			-kd * Vector3.Dot(tool_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
-		print (c.contacts [0].otherCollider.gameObject.name + ", player pos = " + playerPos + ", contact pos = " + contactPos + ", depth = " + depth);
+		tool_force = kp * depth * direction + // stiffness: pushes outward
+			-kd * Vector3.Dot (tool_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
+		print (c.contacts [0].otherCollider.gameObject.name + ", player pos = " + playerPos + ", contact pos = " + contactPos + ", depth = " + depth + ", force = " + tool_force);
 	}
 
 	/// <summary>
 	/// Raises the collision exit event. This happens at the timestep when the player object
 	/// loses contact with the other object.
 	///
-	/// Sets the force back to zero.
+	/// Sets the force back to zero. Again, this assumes that the player was only in contact
+	/// with one object.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionExit (Collision c) {
