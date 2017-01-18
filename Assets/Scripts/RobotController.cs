@@ -1,22 +1,29 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using EXILANT.Labs.CoAP.Channels;
-using EXILANT.Labs.CoAP.Message;
-using EXILANT.Labs.CoAP.Helpers;
-using EXILANT.Labs.CoAP.Exceptions;
 
+/// <summary>
+/// Robot controller script. This is attached to the Player object in the burt-haptics-demo
+/// Unity example. This class derives from MonoBehaviour, which defines some standard
+/// functions that are called by Unity at specified times. Every function defined here is
+/// one of the standard functions. Therefore, you should not change the function names.
+/// However, you can add your own functions.
+///
+/// Useful references:
+///   https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
+///   https://docs.unity3d.com/Manual/ExecutionOrder.html
+/// </summary>
 public class RobotController : MonoBehaviour {
 
-	public float kp = 0;
-	public float kd = 0;
-	private const float positionScale = 15;
-	private Vector3 position;
-	private Vector3 velocity = Vector3.zero;
-	private Vector3 force = Vector3.zero;
+	// public variables can be changed in the Unity editor at any time (even during run time).
+	// Here they are initialized to suggested values.
+	public float kp = 300.0f;
+	public float kd = 30.0f;
+
+	private const float positionScale = 15.0f;  // scales the robot position for the Unity workspace
+
+	// robot state
+	private Vector3 tool_position;
+	private Vector3 tool_velocity = Vector3.zero;
+	private Vector3 tool_force = Vector3.zero;
 
 	Barrett.UnityInterface.RobotConnection robot;
 
@@ -28,7 +35,7 @@ public class RobotController : MonoBehaviour {
 	/// Awake() functions called.
 	/// </summary>
 	void Awake () {
-		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection>();
+		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection> ();
 	}
 
 	/// <summary>
@@ -37,99 +44,39 @@ public class RobotController : MonoBehaviour {
 	/// All of the other objects in the scene have already had their Awake() functions
 	/// called, so communication between objects can happen here.
 	/// </summary>
-	void OnEnable() {}
+	void OnEnable () {}
 
 	/// <summary>
 	/// Runs after OnEnable, but only occurs once (the first time the object is enabled).
 	/// Communication between objects can also happen here.
 	/// </summary>
-	void Start () {
-		// for collision method
-		kp = 20;
-		kd = 1.5f;
-
-		/*
-		// for trigger method
-		kp = 10;
-		kd = 1;
-		*/
-	}
+	void Start () {}
 
 	/// <summary>
-	/// Runs during the physics loop at 500 Hz. Typically, robot control (receiving positions
-	/// and sending forces) should happen here.
+	/// Runs during the physics loop at 250 Hz (fixed timestep of 0.004 s). Typically, robot
+	/// control (receiving positions and sending forces) should happen here.
+	///
+	/// To change the loop rate, open the Unity editor and go to the Time Manager
+	/// (menu: Edit > Project Settings > Time) and change the value of "Fixed Timestep". At
+	/// this time, we recommend a maximum loop rate of 400 Hz (minimum timestep 0.0025 s).
+	/// Reference: https://docs.unity3d.com/Manual/class-TimeManager.html
 	/// </summary>
 	void FixedUpdate ()	{
-		position = positionScale * robot.GetToolPosition ();
-		velocity = positionScale * robot.GetToolVelocity ();
-		transform.position = position;
+		tool_position = positionScale * robot.GetToolPosition ();
+		tool_velocity = positionScale * robot.GetToolVelocity ();
+		transform.position = tool_position;
 
-		robot.SetToolForce (force);
+		// Dividing the force by positionScale allows the gains to be independent of the value
+		// of positionScale. If you add forces that are not related to haptic objects and are
+		// independent of the scaling, you may need to divide only certain components of the
+		// force by positionScale.
+		robot.SetToolForce (tool_force / positionScale);
 	}
 
 	/// <summary>
-	/// Runs every time the object is disabled.
+	/// Runs every time the object is disabled. This can happen multiple times.
 	/// </summary>
-	void OnDisable() {}
-
-	/// <summary>
-	/// Raises the trigger enter event. This happens when the trigger object first contacts
-	/// another object. This will only occur once for each collision. If the object remains
-	/// in contact, OnTriggerStay() will be called instead.
-	/// 
-	/// Initializes the force to zero and prints a debug message.
-	/// </summary>
-	/// <param name="other">Other.</param>
-	void OnTriggerEnter(Collider other) {
-		force = Vector3.zero;
-		print ("Trigger enter " + other.gameObject.name);
-	}
-
-	/// <summary>
-	/// Raises the trigger stay event. This happens for every timestep during with
-	/// the player object remains in contact with the other object.
-	///
-	/// This means that the player object is in contact with another object. The force
-	/// is proportional to the penetration depth, which depends on the sizes, shapes,
-	/// and relative positions of the objects.
-	///
-	/// Note that this code works when the player object can only contact one object at
-	/// a time. If it will be possible to contact multiple objects, modifications must
-	/// be made to handle this.
-	///
-	/// TODO: This is currently not in use. To use this version, change the player object
-	/// to a trigger. The behavior should be the same as with the collision version. Plan
-	/// to move one version to a separate demo.
-	/// </summary>
-	/// <param name="other">Other.</param>
-	void OnTriggerStay(Collider other) {
-		// TODO: switch statement on object name or object tag so only haptic objects result
-		// in forces.
-		// TODO: get player radius from the collider instead because it might be different. Use
-		// other.GetComponent<SphereCollider> ().radius;
-		Vector3 playerPos = this.gameObject.transform.position;
-		float playerRad = this.gameObject.transform.localScale.x / 2;
-		Vector3 otherPos = other.gameObject.transform.position;
-		float otherRad = other.gameObject.transform.localScale.x / 2;
-		float depth = playerRad + otherRad - (playerPos - otherPos).magnitude;  // > 0
-		Vector3 direction = (playerPos - otherPos).normalized;
-		//when k is positive repulsion
-		//when k negative attraction
-		force = kp * depth * direction +	                         // stiffness: pushes outward
-				-kd * Vector3.Dot(velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
-		print ("In contact with object " + other.gameObject.name + ", force = " + force);
-	}
-
-	/// <summary>
-	/// Raises the trigger exit event. This happens at the timestep when the player object
-	/// loses contact with the other object.
-	/// 
-	/// Sets the force back to zero.
-	/// </summary>
-	/// <param name="other">Other.</param>
-	void OnTriggerExit(Collider other) {
-		force = Vector3.zero;
-	}
+	void OnDisable () {}
 
 	/// <summary>
 	/// Raises the collision enter event. This happens when the object first contacts
@@ -137,8 +84,7 @@ public class RobotController : MonoBehaviour {
 	/// in contact, OnCollisionStay() will be called instead.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
-	void OnCollisionEnter(Collision c ) {
-	}
+	void OnCollisionEnter (Collision c) {}
 
 	/// <summary>
 	/// Raises the collision stay event. This happens for every timestep during with
@@ -151,13 +97,9 @@ public class RobotController : MonoBehaviour {
 	/// Note that this code works when the player object can only contact one object at
 	/// a time. If it will be possible to contact multiple objects, modifications must
 	/// be made to handle this.
-	///
-	/// TODO: This *is* currently in use. To use the trigger version, change the player
-	/// object to a trigger. The behavior should be the same as with the this version.
-	/// Plan to move one version to a separate demo.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
-	void OnCollisionStay(Collision c ) {
+	void OnCollisionStay (Collision c) {
 		Vector3 playerPos = this.gameObject.transform.position;
 		Vector3 playerDims = this.gameObject.transform.localScale;
 		float playerRad = c.contacts [0].thisCollider.GetComponent<SphereCollider> ().radius *
@@ -165,23 +107,27 @@ public class RobotController : MonoBehaviour {
 		Vector3 contactPos = c.contacts [0].point;
 		float depth = playerRad - (playerPos - contactPos).magnitude;  // > 0
 		Vector3 direction = (playerPos - contactPos).normalized;
-		force = kp * depth * direction +	                           // stiffness: pushes outward
-			   -kd * Vector3.Dot(velocity, direction) * direction;     // damping: pushes against radial velocity (+ or -)
+		tool_force = kp * depth * direction +	                      // stiffness: pushes outward
+			-kd * Vector3.Dot(tool_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
 		print (c.contacts [0].otherCollider.gameObject.name + ", player pos = " + playerPos + ", contact pos = " + contactPos + ", depth = " + depth);
 	}
 
 	/// <summary>
 	/// Raises the collision exit event. This happens at the timestep when the player object
 	/// loses contact with the other object.
-	/// 
+	///
 	/// Sets the force back to zero.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
-	void OnCollisionExit(Collision c ) {
-		force = Vector3.zero;
+	void OnCollisionExit (Collision c) {
+		tool_force = Vector3.zero;
 	}
 
-	void OnGUI() {
+	/// <summary>
+	/// This function demonstrates how to capture key presses and write messages to the Unity
+	/// console.
+	/// </summary>
+	void OnGUI () {
 		Event e = Event.current;
 		string keyPressed = e.keyCode.ToString();
 		if (e.type == EventType.KeyUp) {
