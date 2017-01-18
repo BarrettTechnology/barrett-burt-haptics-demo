@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Robot controller script. This is attached to the Player object in the burt-haptics-demo
@@ -108,22 +110,7 @@ public class RobotController : MonoBehaviour {
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionStay (Collision c) {
-		Vector3 playerPos = this.gameObject.transform.position;
-
-		// Because this example uses a SphereCollider for the Player, it works best if
-		// the Player object is a sphere (equal scale in x, y, and z). If the Player
-		// object is stretched, the diameter of the SphereCollider is equal to the
-		// largest dimension. So for playerRad here, we use the max of playerDims.
-		Vector3 playerDims = this.gameObject.transform.localScale;  // size of the Player object
-		float playerRad = c.contacts [0].thisCollider.GetComponent<SphereCollider> ().radius *
-		                  Mathf.Max (playerDims.x, playerDims.y, playerDims.z);
-
-		Vector3 contactPos = c.contacts [0].point;
-		float depth = playerRad - (playerPos - contactPos).magnitude;  // > 0
-		Vector3 direction = (playerPos - contactPos).normalized;
-		tool_force = kp * depth * direction + // stiffness: pushes outward
-			-kd * Vector3.Dot (tool_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
-		print (c.contacts [0].otherCollider.gameObject.name + ", player pos = " + playerPos + ", contact pos = " + contactPos + ", depth = " + depth + ", force = " + tool_force);
+		tool_force = c.contacts [0].otherCollider.gameObject.GetComponent<HapticObject>().GetForce();
 	}
 
 	/// <summary>
@@ -155,4 +142,6 @@ public class RobotController : MonoBehaviour {
 	/// Raises the application quit event. This is called when you quit the game.
 	/// </summary>
 	void OnApplicationQuit() {}
+
+	public Vector3 GetVelocity () { return tool_velocity; }
 }
