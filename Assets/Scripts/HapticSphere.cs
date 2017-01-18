@@ -5,7 +5,7 @@ using UnityEngine;
 public class HapticSphere : HapticObject {
 
 	void Awake () {
-		// initialize kp and kp to default values
+		// set default values for kp and kp
 		kp = 400.0f;
 		kd = 40.0f;
 	}
@@ -22,11 +22,11 @@ public class HapticSphere : HapticObject {
 			Vector3 contactPos = c.contacts [0].point;
 			float depth = radius - (position - contactPos).magnitude;  // > 0
 
-			Vector3 other_velocity = c.contacts [0].otherCollider.gameObject.GetComponent<RobotController>().GetVelocity();
+			Vector3 otherVelocity = c.contacts [0].otherCollider.gameObject.GetComponent<RobotController>().GetVelocity();
 
 			Vector3 direction = (position - contactPos).normalized;
 			force = -kp * depth * direction +  // stiffness: pushes outward
-				-kd * Vector3.Dot (other_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
+				-kd * Vector3.Dot (otherVelocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
 		}
 	}
 }
