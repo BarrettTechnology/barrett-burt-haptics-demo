@@ -10,10 +10,6 @@ public class HapticSphere : HapticObject {
 		kd = 40.0f;
 	}
 
-	void OnCollisionEnter (Collision c) {
-		Debug.Log ("Collision enter: " + this.gameObject.name);
-	}
-
 	void OnCollisionStay (Collision c) {
 		if (c.contacts [0].otherCollider.gameObject.name == "Player") {
 			Vector3 position = this.gameObject.transform.position;
@@ -29,15 +25,8 @@ public class HapticSphere : HapticObject {
 			Vector3 other_velocity = c.contacts [0].otherCollider.gameObject.GetComponent<RobotController>().GetVelocity();
 
 			Vector3 direction = (position - contactPos).normalized;
-			force = -kp * depth * direction + // stiffness: pushes outward
+			force = -kp * depth * direction +  // stiffness: pushes outward
 				-kd * Vector3.Dot (other_velocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
-
-			print ("Haptic Sphere: contact pos = " + contactPos + ", depth = " + depth + ", force = " + force);
 		}
-	}
-
-	void OnCollisionExit (Collision c) {
-		Debug.Log ("Collision exit: " + this.gameObject.name);
-		force = Vector3.zero;
 	}
 }
