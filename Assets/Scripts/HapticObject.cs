@@ -4,24 +4,34 @@ using UnityEngine;
 
 /// <summary>
 /// Generic haptic object. Create custom haptic objects that derive from this class.
+/// 
+/// Any haptic object you create in the Unity editor should have an associated
+/// trigger collider and should be tagged with the HapticObject tag, which is a
+/// custom tag created for this purpose. An object can be tagged in the Unity editor
+/// through the Tags drop-down menu.
+/// 
+/// Useful references:
+///   https://unity3d.com/learn/tutorials/topics/physics/colliders-triggers
+///   https://docs.unity3d.com/Manual/Tags.html
 /// </summary>
 abstract public class HapticObject : MonoBehaviour {
 
-	/// Every object has a stiffness (kp) and damping (kd). They are defined as
-	/// public variables, so they can be changed in the Unity editor at any time
-	/// (even during run time). It is recommended to set default values for kp and
-	/// kd in your custom haptic objects.
-	public float kp;
-	public float kd;
+	/// Every haptic object has a stiffness and damping. These are public
+	/// variables, so they can be changed in the Unity editor at any time (even
+	/// during run time). It is recommended to set default values for stiffness
+	/// and damping in your custom haptic objects.
+	public float stiffness;
+	public float damping;
 
 	/// This variable is protected so it can be accessed by derived classes (e.g.,
 	/// HapticSphere and HapticBox).
 	protected Vector3 force = Vector3.zero;
 
 	/// <summary>
-	/// Raises the trigger stay event. If the colliding object is tagged as a
-	/// PlayerObject, calculate the resulting forces. An object can be tagged
-	/// in the Unity editor through the Tags drop-down menu.
+	/// Raises the trigger stay event.
+	/// 
+	/// If the colliding object is tagged as a PlayerObject, calls the function
+	/// to calculate the force.
 	/// </summary>
 	void OnTriggerStay (Collider other) {
 		if (other.gameObject.CompareTag ("PlayerObject")) {
@@ -46,7 +56,7 @@ abstract public class HapticObject : MonoBehaviour {
 	abstract protected void CalcForce (Collider other);
 
 	/// <summary>
-	/// Gets the force.
+	/// Returns the most recently calculated force.
 	/// </summary>
 	public Vector3 GetForce () {
 		return force;

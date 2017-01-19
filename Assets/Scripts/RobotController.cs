@@ -13,13 +13,16 @@ using UnityEngine;
 /// </summary>
 public class RobotController : MonoBehaviour {
 
-	private const float positionScale = 15.0f;  // scales the robot position for the Unity workspace
+	/// Scales the robot position to more closely appoximate the Unity workspace for this game.
+	private const float positionScale = 15.0f;
 
-	// Robot state
+	/// Robot state
 	private Vector3 tool_position;
 	private Vector3 tool_velocity = Vector3.zero;
 	private Vector3 tool_force = Vector3.zero;
 
+	/// Handles communication with the robot. Use exactly one RobotConnection object in Unity
+	/// program, and make sure to set it up in the first scene that will be active.
 	Barrett.UnityInterface.RobotConnection robot;
 
 	////////////////////////////////////////
@@ -58,6 +61,8 @@ public class RobotController : MonoBehaviour {
 	/// To change the loop rate, open the Unity editor and go to the Time Manager
 	/// (menu: Edit > Project Settings > Time) and change the value of "Fixed Timestep". At
 	/// this time, we recommend a maximum loop rate of 400 Hz (minimum timestep 0.0025 s).
+	/// Any time you change the loop rate, you should also re-tune any control gains
+	/// (including the stiffness and damping of haptic objects).
 	/// Reference: https://docs.unity3d.com/Manual/class-TimeManager.html
 	/// </summary>
 	void FixedUpdate ()	{
@@ -65,10 +70,10 @@ public class RobotController : MonoBehaviour {
 		tool_velocity = positionScale * robot.GetToolVelocity ();
 		transform.position = tool_position;
 
-		// Dividing the force by positionScale allows the gains to be independent of the value
-		// of positionScale. If you add forces that are not related to haptic objects and are
-		// independent of the scaling, you may need to divide only certain components of the
-		// force by positionScale.
+		/// Dividing the force by positionScale allows the gains to be independent of the value
+		/// of positionScale. If you add forces that are not related to haptic objects and are
+		/// independent of the scaling, you may need to divide only certain components of the
+		/// force by positionScale.
 		robot.SetToolForce (tool_force / positionScale);
 	}
 

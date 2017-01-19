@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A haptic sphere derived from the generic haptic object class. Make sure your
+/// object has a SphereCollider that is set as a Trigger. Also make sure it is
+/// tagged with the HapticObject tag.
+/// </summary>
 public class HapticSphere : HapticObject {
 
+	/// <summary>
+	/// Sets the default stiffness and damping for this object.
+	/// </summary>
 	void Awake () {
-		// set default values for kp and kp
-		kp = 700.0f;
-		kd = 100.0f;
+		stiffness = 500.0f;
+		damping = 60.0f;
 	}
 
 	/// <summary>
@@ -19,7 +26,8 @@ public class HapticSphere : HapticObject {
 		Vector3 playerPos = player.gameObject.transform.position;
 		Vector3 thisPos = this.gameObject.transform.position;
 
-		// Both should be spheres, but check all the dimensions just in case.
+		/// Get the radius of each collider. Both should be spheres, but check all
+		/// the dimensions just in case.
 		Vector3 playerDims = player.gameObject.transform.localScale;
 		Vector3 thisDims = this.gameObject.transform.localScale;
 
@@ -27,13 +35,17 @@ public class HapticSphere : HapticObject {
 			Mathf.Max (playerDims.x, playerDims.y, playerDims.z);
 		float thisRad = this.GetComponent<SphereCollider> ().radius *
 			Mathf.Max (thisDims.x, thisDims.y, thisDims.z);
-		
+
+		/// Calculate the penetration depth and direction.
 		float depth = playerRad + thisRad - (thisPos - playerPos).magnitude;  // > 0
-
-		Vector3 otherVelocity = player.gameObject.GetComponent<RobotController>().GetVelocity();
-
 		Vector3 direction = (thisPos - playerPos).normalized;
-		force = -kp * depth * direction +  // stiffness: pushes outward
-			-kd * Vector3.Dot (otherVelocity, direction) * direction;  // damping: pushes against radial velocity (+ or -)
+
+		/// Calculate the stiffness force (pushes outward). Allows pop-through.
+		force = -stiffness * depth * direction;
+
+		/// Get the velocity of the Player object and add the damping force, which
+		/// is needed for stability. This pushes against radial velocity (+ or -).
+		Vector3 playerVelocity = player.gameObject.GetComponent<RobotController>().GetVelocity();
+		force += -damping * Vector3.Dot (playerVelocity, direction) * direction;
 	}
 }
