@@ -19,14 +19,6 @@ abstract public class HapticObject : MonoBehaviour {
 	protected Vector3 force = Vector3.zero;
 
 	/// <summary>
-	/// Raises the collision enter event.
-	/// </summary>
-	/// <param name="c">C.</param>
-	void OnCollisionEnter (Collision c) {
-		Debug.Log ("Collision enter: " + this.gameObject.name);
-	}
-
-	/// <summary>
 	/// Raises the collision stay event. If the colliding object is tagged as a
 	/// PlayerObject, calculate the resulting forces. An object can be tagged
 	/// in the Unity editor through the Tags drop-down menu.
@@ -45,7 +37,6 @@ abstract public class HapticObject : MonoBehaviour {
 	/// </summary>
 	/// <param name="c">C.</param>
 	void OnCollisionExit (Collision c) {
-		Debug.Log ("Collision exit: " + this.gameObject.name);
 		force = Vector3.zero;
 	}
 
