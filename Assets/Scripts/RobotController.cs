@@ -78,15 +78,14 @@ public class RobotController : MonoBehaviour {
 	void OnDisable () {}
 
 	/// <summary>
-	/// Raises the collision enter event. This happens when the object first contacts
+	/// Raises the trigger enter event. This happens when the object first contacts
 	/// another object. This will only occur once for each collision. If the object remains
-	/// in contact, OnCollisionStay() will be called instead.
+	/// in contact, OnTriggerStay() will be called instead.
 	/// </summary>
-	/// <param name="c">Collision object.</param>
-	void OnCollisionEnter (Collision c) {}
+	void OnTriggerEnter (Collider other) {}
 
 	/// <summary>
-	/// Raises the collision stay event. This happens for every timestep during with
+	/// Raises the trigger stay event. This happens for every timestep during with
 	/// the player object remains in contact with the other object.
 	///
 	/// If the colliding object is tagged as a HapticObject, it calculates forces that
@@ -98,23 +97,21 @@ public class RobotController : MonoBehaviour {
 	/// objects at the same time or multiple points on the same object (the latter can
 	/// often happen with very thin objects), modifications must be made to handle this.
 	/// </summary>
-	/// <param name="c">Collision object.</param>
-	void OnCollisionStay (Collision c) {
+	void OnTriggerStay (Collider other) {
 		tool_force = Vector3.zero;
-		if (c.contacts [0].otherCollider.gameObject.CompareTag ("HapticObject")) {
-			tool_force += c.contacts [0].otherCollider.gameObject.GetComponent<HapticObject> ().GetForce ();
+		if (other.gameObject.CompareTag ("HapticObject")) {
+			tool_force += other.gameObject.GetComponent<HapticObject> ().GetForce ();
 		}
 	}
 
 	/// <summary>
-	/// Raises the collision exit event. This happens at the timestep when the player object
+	/// Raises the trigger exit event. This happens at the timestep when the player object
 	/// loses contact with the other object.
 	///
 	/// Sets the force back to zero. Again, this assumes that the player was only in contact
 	/// with one object.
 	/// </summary>
-	/// <param name="c">Collision object.</param>
-	void OnCollisionExit (Collision c) {
+	void OnTriggerExit (Collider other) {
 		tool_force = Vector3.zero;
 	}
 
