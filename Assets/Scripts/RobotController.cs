@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Robot controller script. This is attached to the Player object in the burt-haptics-demo
-/// Unity example. This class derives from MonoBehaviour, which defines some standard
-/// functions that are called by Unity at specified times. Every function defined here is
-/// one of the standard functions. Therefore, you should not change the function names.
-/// However, you can add your own functions.
+/// Robot controller class. This script is attached to the Player object in the burt-haptics-demo
+/// Unity example. This class derives from MonoBehaviour, which defines some standard functions
+/// that are called by Unity at specified times. Do not change the names of these functions.
 ///
 /// Useful references:
 ///   https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
@@ -15,18 +13,18 @@ using UnityEngine;
 /// </summary>
 public class RobotController : MonoBehaviour {
 
-	// public variables can be changed in the Unity editor at any time (even during run time).
-	public float kp;
-	public float kd;
-
 	private const float positionScale = 15.0f;  // scales the robot position for the Unity workspace
 
-	// robot state
+	// Robot state
 	private Vector3 tool_position;
 	private Vector3 tool_velocity = Vector3.zero;
 	private Vector3 tool_force = Vector3.zero;
 
 	Barrett.UnityInterface.RobotConnection robot;
+
+	////////////////////////////////////////
+	/// Standard MonoBehaviour functions ///
+	////////////////////////////////////////
 
 	/// <summary>
 	/// Runs when the scene is entered. This is the first thing that happens, and it
@@ -37,10 +35,6 @@ public class RobotController : MonoBehaviour {
 	/// </summary>
 	void Awake () {
 		robot = GameObject.Find ("RobotConnection").GetComponent<Barrett.UnityInterface.RobotConnection> ();
-
-		// initialize kp and kp to default values
-		kp = 400.0f;
-		kd = 40.0f;
 	}
 
 	/// <summary>
@@ -89,19 +83,15 @@ public class RobotController : MonoBehaviour {
 	/// in contact, OnCollisionStay() will be called instead.
 	/// </summary>
 	/// <param name="c">Collision object.</param>
-	void OnCollisionEnter (Collision c) {
-		for (int i = 0; i < c.contacts.Length; i++) {
-			Debug.Log ("Collision enter: " + c.contacts [i].otherCollider.gameObject.name);
-		}
-	}
+	void OnCollisionEnter (Collision c) {}
 
 	/// <summary>
 	/// Raises the collision stay event. This happens for every timestep during with
 	/// the player object remains in contact with the other object.
 	///
-	/// This means that the player object is in contact with another object. The force
-	/// is proportional to the penetration depth, which depends on the sizes, shapes,
-	/// and relative positions of the objects.
+	/// If the colliding object is tagged as a HapticObject, it calculates forces that
+	/// can be applied to the robot. An object can be tagged in the Unity editor through
+	/// the Tags drop-down menu.
 	///
 	/// Note that this code works when the player object can only contact one object at
 	/// a time, and only at a single point. If it will be possible to contact multiple
@@ -110,7 +100,10 @@ public class RobotController : MonoBehaviour {
 	/// </summary>
 	/// <param name="c">Collision object.</param>
 	void OnCollisionStay (Collision c) {
-		tool_force = c.contacts [0].otherCollider.gameObject.GetComponent<HapticObject>().GetForce();
+		tool_force = Vector3.zero;
+		if (c.contacts [0].otherCollider.gameObject.CompareTag ("HapticObject")) {
+			tool_force += c.contacts [0].otherCollider.gameObject.GetComponent<HapticObject> ().GetForce ();
+		}
 	}
 
 	/// <summary>
@@ -127,7 +120,7 @@ public class RobotController : MonoBehaviour {
 
 	/// <summary>
 	/// This function demonstrates how to capture key presses and write messages to the Unity
-	/// console.
+	/// console. Key presses are not used in this example.
 	/// </summary>
 	void OnGUI () {
 		Event e = Event.current;
@@ -143,5 +136,15 @@ public class RobotController : MonoBehaviour {
 	/// </summary>
 	void OnApplicationQuit() {}
 
-	public Vector3 GetVelocity () { return tool_velocity; }
+	////////////////////////////////////
+	/// Custom functions begin here! ///
+	////////////////////////////////////
+
+	/// <summary>
+	/// Gets the tool velocity (scaled for the Unity workspace).
+	/// </summary>
+	/// <returns>The velocity.</returns>
+	public Vector3 GetVelocity () {
+		return tool_velocity;
+	}
 }
