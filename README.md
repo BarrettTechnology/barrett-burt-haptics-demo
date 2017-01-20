@@ -26,7 +26,7 @@
 This demo includes two simple haptic shapes and a haptic cursor that allows the user to feel the shapes with the Burt robot.
 The source code to this demo contains information in the comments describing a method for creating custom haptic objects.
 
-<img src="./doc/assets/img/demo-screenshot.png" width="1000"/>
+<img src="./docs/assets/img/demo-screenshot.png" width="1000"/>
 
 ## Installation
 
