@@ -54,7 +54,7 @@ cd ~/burt-haptics-demo
 * Download the Unity .deb from here: http://beta.unity3d.com/download/b7d937b6f596/unity-editor_amd64-5.6.0xb3Linux.deb
   (sha1sum 5d71b191d9f2099e0f5552c0b11e33003f441503)
 * `cd Downloads` or wherever you downloaded that file to
-* Depackage and install: `sudo dpkg -i unity-editor_amd64-5.6.0xb3Linux.deb`
+* Depackage and install: `sudo dpkg -i unity-editor_amd64-5.6.0xb3Linux.deb`. This will fail the first time but is needed for the next step.
 * Install dependencies with `sudo apt-get install -f`
 * Rerun dpkg now that the dependencies have been fixed: `sudo dpkg -i unity-editor_amd64-5.6.0xb3Linux.deb`
 
@@ -64,7 +64,7 @@ cd ~/burt-haptics-demo
 
 ### Run the demo
 
-* First, ensure that your Burt robot is set up and connected according to the instructions included with your system, also available [here](http://support.barrett.com/wiki/Therapy).
+* First, ensure that your Burt robot is set up and connected according to the instructions included with your system, also available [here](http://support.barrett.com/wiki/Therapy/HardwareSetup).
 * Open the Unity editor. If this is the first time, and enter your license number (including hyphens) if applicable.
 * Open the project by clicking on open in the upper right corner and navigating to the base directory (`/path/to/burt-haptics-demo`) for the project.
 * If you see any error messages, check the list of [known issues](#known-issues) below.
