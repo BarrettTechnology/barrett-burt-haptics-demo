@@ -1,11 +1,9 @@
-# burt-haptics-demo
+# barrett-burt-haptics-demo
 > Simple Unity haptics demo
-
-**Current CI Status**: [![Build Status](https://git.barrett.com/software/burt-haptics-demo/badges/devel/build.svg)](https://git.barrett.com/software/burt-haptics-demo/pipelines)
 
 <!-- TOC depthFrom:1 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [burt-haptics-demo](#burt-haptics-demo)
+- [barrett-burt-haptics-demo](#barrett-burt-haptics-demo)
 	- [Overview](#overview)
 	- [Installation](#installation)
     	- [Clone the repository](#clone-the-repository)
@@ -36,13 +34,13 @@ The source code to this demo contains information in the comments describing a m
 
 ```
 cd ~
-git clone https://git.barrett.com/software/burt-haptics-demo
+git clone https://github.com/BarrettTechnology/barrett-burt-haptics-demo.git
 ```
 
 ### Install dependencies
 
 ```
-cd ~/burt-haptics-demo
+cd ~/barrett-burt-haptics-demo
 ./scripts/install-dependencies.sh
 ```
 
@@ -66,7 +64,7 @@ cd ~/burt-haptics-demo
 
 * First, ensure that your Burt robot is set up and connected according to the instructions included with your system, also available [here](http://support.barrett.com/wiki/Therapy/HardwareSetup).
 * Open the Unity editor. If this is the first time, and enter your license number (including hyphens) if applicable.
-* Open the project by clicking on open in the upper right corner and navigating to the base directory (`/path/to/burt-haptics-demo`) for the project.
+* Open the project by clicking on open in the upper right corner and navigating to the base directory (`/path/to/barrett-burt-haptics-demo`) for the project.
 * If you see any error messages, check the list of [known issues](#known-issues) below.
 * In the Project panel, navigate to Assets > Scenes. Double click HapticsDemo to make sure the scene is selected. (Since there is only one scene, it should be open by default. If you add other scenes, this may not be the case.)
 * Release the Burt E-stop.
