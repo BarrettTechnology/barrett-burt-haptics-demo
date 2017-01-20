@@ -7,8 +7,13 @@ using UnityEngine;
 /// 
 /// Any haptic object you create in the Unity editor should have an associated
 /// trigger collider and should be tagged with the HapticObject tag, which is a
-/// custom tag created for this purpose. An object can be tagged in the Unity editor
-/// through the Tags drop-down menu.
+/// custom tag created for this purpose.
+/// 
+/// Likewise, your cursor should be tagged with the HapticCursor tag, another
+/// custom tag.
+///
+/// An object can be tagged in the Unity editor through the Tags drop-down menu.
+/// New custom tags can also be created in this menu.
 /// 
 /// Useful references:
 ///   https://unity3d.com/learn/tutorials/topics/physics/colliders-triggers
@@ -30,11 +35,11 @@ abstract public class HapticObject : MonoBehaviour {
 	/// <summary>
 	/// Raises the trigger stay event.
 	/// 
-	/// If the colliding object is tagged as a PlayerObject, calls the function
+	/// If the colliding object is tagged as a HapticCursor, calls the function
 	/// to calculate the force.
 	/// </summary>
 	void OnTriggerStay (Collider other) {
-		if (other.gameObject.CompareTag ("PlayerObject")) {
+		if (other.gameObject.CompareTag ("HapticCursor")) {
 			CalcForce (other);
 		}
 	}
