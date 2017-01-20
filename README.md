@@ -5,11 +5,19 @@
 
 <!-- TOC depthFrom:1 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [burt-haptics-demo](#cookiecutterprojectslug)
+- [burt-haptics-demo](#burt-haptics-demo)
 	- [Overview](#overview)
-	- [Usage](#usage)
-	- [Contributing](#contributing)
-	- [Resources](#resources)
+	- [Installation](#installation)
+    	- [Clone the repository](#clone-the-repository)
+    	- [Install dependencies](#install-dependencies)
+    	- [Install the Unity editor](#install-the-unity-editor)
+    - [Usage](#usage)
+        - [Run the demo](#run-the-demo)
+        - [Edit the project](#edit-the-project)
+        - [Build an executable](#build-an-executable)
+    - [Resources](#resources)
+    - [Contributing](#contributing)
+    - [Known issues](#known-issues)
 
 <!-- /TOC -->
 
@@ -20,7 +28,7 @@ The source code to this demo contains information in the comments describing a m
 
 ## Installation
 
-### Clone the repository.
+### Clone the repository
 
 ```
 git clone https://git.barrett.com/software/burt-haptics-demo
@@ -32,7 +40,7 @@ git clone https://git.barrett.com/software/burt-haptics-demo
 sudo apt-get install -y mono-complete monodevelop
 ```
 
-### Install the Unity editor.
+### Install the Unity editor
 
 * If you have already installed an older version of Unity:
   * If you are using a Unity Pro license, return the license in Help > Manage License > Return License
