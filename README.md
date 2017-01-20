@@ -26,6 +26,8 @@
 This demo includes two simple haptic shapes and a haptic cursor that allows the user to feel the shapes with the Burt robot.
 The source code to this demo contains information in the comments describing a method for creating custom haptic objects.
 
+<img src="./doc/assets/img/network-manager-1.png" width="1000"/>
+
 ## Installation
 
 ***Make sure you are connected to the internet for installation. When installation is complete, disconnect the internet connection to run the demo.***
