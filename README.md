@@ -28,16 +28,20 @@ The source code to this demo contains information in the comments describing a m
 
 ## Installation
 
+***Make sure you are connected to the internet for installation. When installation is complete, disconnect the internet connection to run the demo.***
+
 ### Clone the repository
 
 ```
+cd ~
 git clone https://git.barrett.com/software/burt-haptics-demo
 ```
 
 ### Install dependencies
 
 ```
-sudo apt-get install -y mono-complete monodevelop
+cd ~/burt-haptics-demo
+./scripts/install-dependencies.sh
 ```
 
 ### Install the Unity editor
