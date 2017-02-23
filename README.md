@@ -63,7 +63,10 @@ cd ~/barrett-burt-haptics-demo
 ### Run the demo
 
 * First, ensure that your Burt robot is set up and connected according to the instructions included with your system, also available [here](http://support.barrett.com/wiki/Therapy/HardwareSetup).
-* Open the Unity editor. If this is the first time, and enter your license number (including hyphens) if applicable.
+* Open the Unity editor.
+  * If this is the first time, and enter your license number (including hyphens) if applicable.
+  * If the Unity editor fails to load the first time (gets stuck at a blank "Getting Started" screen), you may need
+    to apply [this fix](https://forum.unity3d.com/threads/dark-grey-screen-fix.448936/). This usually happens with a fresh installation, not an upgrade.
 * Open the project by clicking on open in the upper right corner and navigating to the base directory (`/path/to/barrett-burt-haptics-demo`) for the project.
 * If you see any error messages, check the list of [known issues](#known-issues) below.
 * In the Project panel, navigate to Assets > Scenes. Double click HapticsDemo to make sure the scene is selected. (Since there is only one scene, it should be open by default. If you add other scenes, this may not be the case.)
