@@ -58,11 +58,11 @@ cd ~/barrett-burt-haptics-demo
 
 ## Run Unity for first time (gray window screen)
 * In case you run in a gray screen that does not allow you doing anything, just type the following commands:
-`cd ~/.local/share/unity3d/Packages`
-`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-cloud-hub-0.0.15.tgz`
-`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-toolbar.0.6.6.tgz`
-`npm install /opt/Unity/Editor/Data/Resources/Packages/unity-editor-home.0.6.4.tgz`
-`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-history.0.6.4.tgz`
+* `cd ~/.local/share/unity3d/Packages`
+* `npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-cloud-hub-0.0.15.tgz`
+* `npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-toolbar.0.6.6.tgz`
+* `npm install /opt/Unity/Editor/Data/Resources/Packages/unity-editor-home.0.6.4.tgz`
+* `npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-history.0.6.4.tgz`
 
 ## Usage
 
