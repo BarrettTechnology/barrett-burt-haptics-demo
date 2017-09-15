@@ -56,6 +56,14 @@ cd ~/barrett-burt-haptics-demo
 * Install dependencies with `sudo apt-get install -f`
 * Rerun dpkg now that the dependencies have been fixed: `sudo dpkg -i unity-editor_amd64-5.6.0xb3Linux.deb`
 
+## Run Unity for first time (gray window screen)
+* In case you run in a gray screen that does not allow you doing anything, just type the following commands:
+`cd ~/.local/share/unity3d/Packages`
+`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-cloud-hub-0.0.15.tgz`
+`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-toolbar.0.6.6.tgz`
+`npm install /opt/Unity/Editor/Data/Resources/Packages/unity-editor-home.0.6.4.tgz`
+`npm install /opt/Unity/Editor/Data/Resources/Packages/unityeditor-collab-history.0.6.4.tgz`
+
 ## Usage
 
 ***Do not use the internet while running the demo. It slows down communication with the robot and can cause instability.***
